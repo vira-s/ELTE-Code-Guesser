@@ -13,7 +13,7 @@
     <modules>
         <module>./src/codeguesser_model</module>
         <module>./src/codeguesser_view</module>
-        <module>./src/codeguesser_persistence</module>
+        <module>./src/codeguesser_controller</module>
     </modules>
 
     <dependencies>
