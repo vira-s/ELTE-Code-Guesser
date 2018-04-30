@@ -11,7 +11,7 @@ public enum GuessDigitStatusEnum {
      * The digit is placed correctly in the guess. (e.g. original is 123 guess is 425 then the 2 is in this status.)
      * This status contains the 'CORRECT_NUMBER' status as well.
      */
-    CORRECT_PLACEMENT,
+    CORRECT_NUMBER_AND_PLACEMENT,
 
     /**
      * The digit is present in the original number as well.

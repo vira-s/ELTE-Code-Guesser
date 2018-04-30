@@ -3,6 +3,7 @@ package hu.edu.elte.codeguesser_model.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,11 +32,20 @@ public class Guess {
         initializeDigitStatus(guess.length());
     }
 
+    /**
+     * Constructor.
+     *
+     * @param guess The guess made by a user
+     * @param digitStatusList The list of digit state
+     */
+    private Guess(String guess, List<GuessDigitStatusEnum> digitStatusList) {
+        this.guess = guess;
+        this.digitStatusList = new ArrayList<>(digitStatusList);
+    }
+
     private void initializeDigitStatus(int length) {
         this.digitStatusList = Arrays.asList(new GuessDigitStatusEnum[length]);
-        for (int index = 0; index <  length; ++index) {
-            this.digitStatusList.set(index, GuessDigitStatusEnum.UNKNOWN);
-        }
+        this.digitStatusList.addAll(0, Collections.nCopies(length, GuessDigitStatusEnum.UNKNOWN));
     }
 
     public String getGuess() {
@@ -95,5 +105,9 @@ public class Guess {
                 + "guess='" + guess + '\''
                 + ", digitStatusList=" + digitStatusList
                 + '}';
+    }
+
+    public static Guess from(String guess, List<GuessDigitStatusEnum> digitStatusList) {
+        return new Guess(guess, digitStatusList);
     }
 }
