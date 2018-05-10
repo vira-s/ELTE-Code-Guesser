@@ -1,6 +1,6 @@
 package hu.edu.elte.codeguesser_presenter;
 
-import hu.edu.elte.codeguesser_view.CustomActionListener;
+import hu.edu.elte.codeguesser_view.listeners.CustomActionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

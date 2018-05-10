@@ -1,4 +1,4 @@
-package hu.edu.elte.codeguesser_view;
+package hu.edu.elte.codeguesser_view.listeners;
 
 import java.awt.event.ActionListener;
 
