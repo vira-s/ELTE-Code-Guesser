@@ -1,9 +1,10 @@
 package hu.edu.elte.codeguesser_view;
 
+import hu.edu.elte.codeguesser_view.action.ActionType;
+import hu.edu.elte.codeguesser_view.button.GameButton;
 import hu.edu.elte.codeguesser_view.listeners.CustomActionListener;
 import hu.edu.elte.codeguesser_view.listeners.CustomWindowListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
@@ -18,7 +19,7 @@ public class CodeguesserView extends JFrame {
     protected CustomActionListener actionListener;
     protected CustomWindowListener windowListener;
     protected JPanel panel;
-    protected JButton button;
+    protected GameButton button;
 
     public CodeguesserView(CustomActionListener actionListener) {
         super(WINDOW_TITLE);
@@ -33,8 +34,7 @@ public class CodeguesserView extends JFrame {
         setSize(800, 600);
         addWindowListener(windowListener);
 
-        button = new JButton("Exit");
-        button.addActionListener(actionListener);
+        button = new GameButton(ActionType.EXIT, actionListener);
 
         panel = new JPanel();
         panel.setLayout(new GridLayout(1, 1));
