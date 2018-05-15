@@ -33,5 +33,25 @@ public class GuessModel extends CodeModel {
         this.digitStatusList = new ArrayList<>(Collections.nCopies(length, GuessDigitStatusEnum.UNKNOWN));
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        GuessModel that = (GuessModel) other;
+        return Objects.equals(code, that.code)
+                && Objects.equals(digitStatusList, that.digitStatusList);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(code, digitStatusList);
+    }
+
+    @Override
+    public String toString() {
+        return "GuessModel{"
+                + "code=\'" + code + '\''
+                + "digitStatusList=" + digitStatusList
+                + '}';
+    }
 }

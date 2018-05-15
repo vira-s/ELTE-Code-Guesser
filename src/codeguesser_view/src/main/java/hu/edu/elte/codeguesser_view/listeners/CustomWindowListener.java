@@ -1,8 +1,10 @@
 package hu.edu.elte.codeguesser_view.listeners;
 
+import hu.edu.elte.codeguesser_view.dialogs.ConfirmationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.JOptionPane;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -11,7 +13,7 @@ import java.awt.event.WindowListener;
  */
 public class CustomWindowListener implements WindowListener {
 
-    Logger LOGGER = LoggerFactory.getLogger(CustomWindowListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomWindowListener.class);
 
     @Override
     public void windowOpened(WindowEvent event) {
@@ -20,9 +22,16 @@ public class CustomWindowListener implements WindowListener {
 
     @Override
     public void windowClosing(WindowEvent event) {
-        LOGGER.info("Closing window.");
+        LOGGER.info("About to close game window.");
 
-        System.exit(0);
+        ConfirmationDialog confirmationDialog = new ConfirmationDialog(null, "Are you sure, you want to exit?", "Exit");
+        int answer = confirmationDialog.getAnswer();
+        if (answer == JOptionPane.YES_OPTION) {
+            LOGGER.info("Closing window.");
+            System.exit(0);
+        } else {
+            event.getWindow().setVisible(true);
+        }
     }
 
     @Override

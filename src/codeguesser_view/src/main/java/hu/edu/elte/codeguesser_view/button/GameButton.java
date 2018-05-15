@@ -2,7 +2,7 @@ package hu.edu.elte.codeguesser_view.button;
 
 import hu.edu.elte.codeguesser_view.action.ActionType;
 
-import javax.swing.*;
+import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.Objects;
 
@@ -11,9 +11,9 @@ import java.util.Objects;
  */
 public class GameButton extends JButton {
 
-    private final ActionType buttonActionType;
+    protected final ActionType buttonActionType;
 
-    private final ActionListener actionListener;
+    protected final ActionListener actionListener;
 
     public GameButton(ActionType buttonType, ActionListener actionListener) {
         this.buttonActionType = buttonType;
@@ -21,12 +21,6 @@ public class GameButton extends JButton {
 
         addActionListener(this.actionListener);
         setText(this.buttonActionType.getText());
-//        setAction(new AbstractAction() {
-//            @Override
-//            public void actionPerformed(ActionEvent event) {
-//                actionListener.actionPerformed();
-//            }
-//        });
     }
 
     public ActionType getButtonActionType() {
@@ -39,20 +33,15 @@ public class GameButton extends JButton {
 
     @Override
     public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (other == null || getClass() != other.getClass()) {
-            return false;
-        }
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
         GameButton that = (GameButton) other;
-        return buttonActionType == that.buttonActionType
-                && Objects.equals(actionListener, that.actionListener);
+        return buttonActionType == that.buttonActionType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(buttonActionType, actionListener);
+        return Objects.hash(buttonActionType);
     }
 
     @Override
