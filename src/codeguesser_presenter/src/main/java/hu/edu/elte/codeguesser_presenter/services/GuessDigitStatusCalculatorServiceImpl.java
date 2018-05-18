@@ -90,7 +90,7 @@ public class GuessDigitStatusCalculatorServiceImpl implements GuessDigitStatusCa
                 secretCode = replaceDigitWithMatchedMarkerAtIndex(secretCode, i);
                 guess = replaceDigitWithMatchedMarkerAtIndex(guess, i);
 
-                guessDigitStatuses.add(GuessDigitStatusEnum.CORRECT_NUMBER_AND_CORRECT_PLACEMENT);
+                guessDigitStatuses.add(GuessDigitStatusEnum.CORRECT_PLACEMENT);
             } else {
                 guessDigitStatuses.add(statusForMismatch);
             }
@@ -119,7 +119,7 @@ public class GuessDigitStatusCalculatorServiceImpl implements GuessDigitStatusCa
                 secretCode = replaceDigitWithMatchedMarkerAtIndex(secretCode, secretCode.indexOf(currentGuessDigit));
                 guess = replaceDigitWithMatchedMarkerAtIndex(guess, i);
 
-                guessDigitStatuses.add(GuessDigitStatusEnum.CORRECT_NUMBER_AND_WRONG_PLACEMENT);
+                guessDigitStatuses.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
 
             } else if (!currentGuessDigit.equals(String.valueOf(MATCHED_DIGIT_MARKER))
                     && !secretCode.contains(currentGuessDigit)) {
