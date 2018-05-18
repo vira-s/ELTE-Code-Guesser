@@ -22,6 +22,8 @@ public class GameMenu extends JMenuBar {
     private JMenu optionsMenu;
 
     private JMenuItem newGameEasy;
+    private JMenuItem newGameMedium;
+    private JMenuItem newGameHard;
 
     private JMenuItem exitGame;
 
@@ -38,13 +40,14 @@ public class GameMenu extends JMenuBar {
                 return new WindowMenuItem(actionType.getText(), 'x', KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK),
                         new ExitAction());
             case NEW_GAME_EASY:
-                return new GameModeMenuItem(actionType.getText(), actionType.name().charAt(0), KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK),
+                return new GameModeMenuItem(actionType.getText(), actionType.name().charAt(9), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_MASK),
                         new NewGameAction(actionType), actionType, parentView.getActionListener());
-            //TODO missing implementation
-            // case NEW_GAME_MEDIUM:
-            //     return null;
-            // case NEW_GAME_HARD:
-            //     return null;
+             case NEW_GAME_MEDIUM:
+                 return new GameModeMenuItem(actionType.getText(), actionType.name().charAt(9), KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.CTRL_MASK),
+                         new NewGameAction(actionType), actionType, parentView.getActionListener());
+             case NEW_GAME_HARD:
+                 return new GameModeMenuItem(actionType.getText(), actionType.name().charAt(9), KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.CTRL_MASK),
+                         new NewGameAction(actionType), actionType, parentView.getActionListener());
             default:
                 return null;
         }
@@ -60,10 +63,12 @@ public class GameMenu extends JMenuBar {
     private void setOptionsPreferences() {
         newGameEasy = initMenuItem(ActionType.NEW_GAME_EASY);
         optionsMenu.add(newGameEasy);
-//        newGameEasy = initMenuItem(ActionType.NEW_GAME_MEDIUM);
-//        optionsMenu.add(newGameMedium);
-//        newGameEasy = initMenuItem(ActionType.NEW_GAME_HARD);
-//        optionsMenu.add(newGameHard);
+
+        newGameMedium = initMenuItem(ActionType.NEW_GAME_MEDIUM);
+        optionsMenu.add(newGameMedium);
+
+        newGameHard = initMenuItem(ActionType.NEW_GAME_HARD);
+        optionsMenu.add(newGameHard);
 
         optionsMenu.addSeparator();
 
