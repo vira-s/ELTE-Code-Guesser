@@ -105,4 +105,67 @@ public class TestGuessDigitStatusCalculatorServiceImpl {
         easyCorrect.add(GuessDigitStatusEnum.WRONG);
         assertEquals(easyCorrect, result.calculateGuessDigitStatus(GameMode.EASY, "123", "453"));
     }
+
+    @Test
+    public void testMediumNotContainingAny() {
+        List<GuessDigitStatusEnum> mediumNotContainingAny = new ArrayList<>();
+        mediumNotContainingAny.add(GuessDigitStatusEnum.WRONG);
+        mediumNotContainingAny.add(GuessDigitStatusEnum.WRONG);
+        mediumNotContainingAny.add(GuessDigitStatusEnum.WRONG);
+        assertEquals(mediumNotContainingAny, result.calculateGuessDigitStatus(GameMode.MEDIUM, "123", "456"));
+    }
+
+    @Test
+    public void testMediumContainingSome1() { // contains 1st digit
+        List<GuessDigitStatusEnum> mediumContainingSome = new ArrayList<>();
+        mediumContainingSome.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
+        mediumContainingSome.add(GuessDigitStatusEnum.WRONG);
+        mediumContainingSome.add(GuessDigitStatusEnum.WRONG);
+        assertEquals(mediumContainingSome, result.calculateGuessDigitStatus(GameMode.MEDIUM, "123", "356"));
+    }
+
+    @Test
+    public void testMediumContainingSome2() { // contains 2nd digit
+        List<GuessDigitStatusEnum> mediumContainingSome = new ArrayList<>();
+        mediumContainingSome.add(GuessDigitStatusEnum.WRONG);
+        mediumContainingSome.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
+        mediumContainingSome.add(GuessDigitStatusEnum.WRONG);
+        assertEquals(mediumContainingSome, result.calculateGuessDigitStatus(GameMode.MEDIUM, "123", "416"));
+    }
+
+    @Test
+    public void testMediumContainingSome3() { // contains 3rd digit
+        List<GuessDigitStatusEnum> mediumContainingSome = new ArrayList<>();
+        mediumContainingSome.add(GuessDigitStatusEnum.WRONG);
+        mediumContainingSome.add(GuessDigitStatusEnum.WRONG);
+        mediumContainingSome.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
+        assertEquals(mediumContainingSome, result.calculateGuessDigitStatus(GameMode.MEDIUM, "123", "452"));
+    }
+
+    @Test
+    public void testMediumCorrect1() { // 1st digit is correct
+        List<GuessDigitStatusEnum> mediumCorrect = new ArrayList<>();
+        mediumCorrect.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
+        mediumCorrect.add(GuessDigitStatusEnum.WRONG);
+        mediumCorrect.add(GuessDigitStatusEnum.WRONG);
+        assertEquals(mediumCorrect, result.calculateGuessDigitStatus(GameMode.MEDIUM, "123", "156"));
+    }
+
+    @Test
+    public void testMediumCorrect2() { // 2nd digit is correct
+        List<GuessDigitStatusEnum> mediumCorrect = new ArrayList<>();
+        mediumCorrect.add(GuessDigitStatusEnum.WRONG);
+        mediumCorrect.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
+        mediumCorrect.add(GuessDigitStatusEnum.WRONG);
+        assertEquals(mediumCorrect, result.calculateGuessDigitStatus(GameMode.MEDIUM, "123", "426"));
+    }
+
+    @Test
+    public void testMediumCorrect3() { // 3rd digit is correct
+        List<GuessDigitStatusEnum> mediumCorrect = new ArrayList<>();
+        mediumCorrect.add(GuessDigitStatusEnum.WRONG);
+        mediumCorrect.add(GuessDigitStatusEnum.WRONG);
+        mediumCorrect.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
+        assertEquals(mediumCorrect, result.calculateGuessDigitStatus(GameMode.MEDIUM, "123", "453"));
+    }
 }
