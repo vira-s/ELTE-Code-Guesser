@@ -171,7 +171,10 @@ public class GuessDigitStatusCalculatorServiceImpl implements GuessDigitStatusCa
 
     private void validateCodes(String secretCode, String guess) {
         Assert.isTrue(StringUtils.isNotBlank(secretCode), "Secret code must not be blank.");
+        Assert.isTrue(StringUtils.isNumeric(secretCode), "Secret code must be a positive integer.");
         Assert.isTrue(StringUtils.isNotBlank(guess), "Guess must not be blank.");
+        Assert.isTrue(StringUtils.isNumeric(guess), "Guess must be a positive integer.");
+        Assert.isTrue(!guess.matches("0[0-9]{1,9}"), "Guess must not start with zero.");
         Assert.isTrue(secretCode.length() == guess.length(), "Guess must be exactly as long as the secret code. "
                 + "Expected: " + secretCode.length() + " Actual: " + guess.length());
     }
