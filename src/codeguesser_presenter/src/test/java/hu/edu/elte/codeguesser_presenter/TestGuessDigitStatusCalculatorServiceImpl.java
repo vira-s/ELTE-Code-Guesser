@@ -168,4 +168,49 @@ public class TestGuessDigitStatusCalculatorServiceImpl {
         mediumCorrect.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
         assertEquals(mediumCorrect, result.calculateGuessDigitStatus(GameMode.MEDIUM, "123", "453"));
     }
+
+    @Test
+    public void testHardNotContainingAny() {
+        List<GuessDigitStatusEnum> hardNotContainingAny = new ArrayList<>();
+        hardNotContainingAny.add(GuessDigitStatusEnum.UNKNOWN);
+        hardNotContainingAny.add(GuessDigitStatusEnum.UNKNOWN);
+        hardNotContainingAny.add(GuessDigitStatusEnum.UNKNOWN);
+        assertEquals(hardNotContainingAny, result.calculateGuessDigitStatus(GameMode.HARD, "123", "456"));
+    }
+
+    @Test
+    public void testHardContainingSome() {
+        List<GuessDigitStatusEnum> hardContainingSome = new ArrayList<>();
+        hardContainingSome.add(GuessDigitStatusEnum.UNKNOWN);
+        hardContainingSome.add(GuessDigitStatusEnum.UNKNOWN);
+        hardContainingSome.add(GuessDigitStatusEnum.UNKNOWN);
+        assertEquals(hardContainingSome, result.calculateGuessDigitStatus(GameMode.HARD, "123", "256"));
+    }
+
+    @Test
+    public void testHardCorrect1() { // 1st digit is correct
+        List<GuessDigitStatusEnum> hardCorrect = new ArrayList<>();
+        hardCorrect.add(GuessDigitStatusEnum.CORRECT_PLACEMENT);
+        hardCorrect.add(GuessDigitStatusEnum.UNKNOWN);
+        hardCorrect.add(GuessDigitStatusEnum.UNKNOWN);
+        assertEquals(hardCorrect, result.calculateGuessDigitStatus(GameMode.HARD, "123", "156"));
+    }
+
+    @Test
+    public void testHardCorrect2() { // 2nd digit is correct
+        List<GuessDigitStatusEnum> hardCorrect = new ArrayList<>();
+        hardCorrect.add(GuessDigitStatusEnum.UNKNOWN);
+        hardCorrect.add(GuessDigitStatusEnum.CORRECT_PLACEMENT);
+        hardCorrect.add(GuessDigitStatusEnum.UNKNOWN);
+        assertEquals(hardCorrect, result.calculateGuessDigitStatus(GameMode.HARD, "123", "426"));
+    }
+
+    @Test
+    public void testHardCorrect3() { // 3rd digit is correct
+        List<GuessDigitStatusEnum> hardCorrect = new ArrayList<>();
+        hardCorrect.add(GuessDigitStatusEnum.UNKNOWN);
+        hardCorrect.add(GuessDigitStatusEnum.UNKNOWN);
+        hardCorrect.add(GuessDigitStatusEnum.CORRECT_PLACEMENT);
+        assertEquals(hardCorrect, result.calculateGuessDigitStatus(GameMode.HARD, "123", "453"));
+    }
 }
