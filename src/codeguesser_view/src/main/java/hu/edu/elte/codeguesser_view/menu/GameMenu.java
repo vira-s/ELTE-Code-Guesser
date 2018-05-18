@@ -42,6 +42,7 @@ public class GameMenu extends JMenuBar {
             case NEW_GAME_EASY:
                 return new GameModeMenuItem(actionType.getText(), actionType.name().charAt(9), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_MASK),
                         new NewGameAction(actionType), actionType, parentView.getActionListener());
+                
              case NEW_GAME_MEDIUM:
                  return new GameModeMenuItem(actionType.getText(), actionType.name().charAt(9), KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.CTRL_MASK),
                          new NewGameAction(actionType), actionType, parentView.getActionListener());
