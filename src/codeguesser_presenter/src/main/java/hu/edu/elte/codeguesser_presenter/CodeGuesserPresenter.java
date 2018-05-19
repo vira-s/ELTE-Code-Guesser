@@ -11,12 +11,13 @@ import hu.edu.elte.codeguesser_view.listeners.CustomActionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.util.List;
 
 /**
  * @author virabia on 5/10/2018
  */
-public class CodeGuesserPresenter implements CustomActionListener {
+public class CodeGuesserPresenter extends AbstractAction implements CustomActionListener {
 
     private final Logger LOGGER = LoggerFactory.getLogger(CodeGuesserPresenter.class);
 
@@ -28,7 +29,13 @@ public class CodeGuesserPresenter implements CustomActionListener {
 
     private String secretCode;
 
-    private int remainingGuesses;
+    private int remainingGuessCount;
+
+    private String status;
+
+    private int codeLength;
+
+    private String gameOver = "";
 
     public CodeGuesserPresenter() {
         this.guessDigitStatusCalculatorService = new GuessDigitStatusCalculatorServiceImpl();
@@ -44,7 +51,9 @@ public class CodeGuesserPresenter implements CustomActionListener {
                 break;
             case GIVE_UP:
                 LOGGER.info(ActionType.GIVE_UP.getText() + " was pressed.");
-                System.exit(0);
+                setGameOver("Game over. You lose... \nThe correct code: " + secretCode.toString());
+                setCodeLength(0);
+               // System.exit(0);
                 break;
             default:
                 break;
@@ -58,6 +67,19 @@ public class CodeGuesserPresenter implements CustomActionListener {
                 LOGGER.info(ActionType.SUBMIT.getText() + " was pressed.");
                 List<GuessDigitStatusEnum> result =
                         guessDigitStatusCalculatorService.calculateGuessDigitStatus(gameMode, secretCode, guess);
+                String statusString = parseStatus(result);
+                setStatus(statusString);
+                decrementRemainingGuessCount();
+                if(containsOnlyGoodGuesses(result)) {
+                    LOGGER.info("GAME OVER WIN");
+                    setGameOver("You win!");
+                    setCodeLength(0);
+
+                } else if(remainingGuessCount == 0 && !result.contains("CORRECT_NUMBER_AND_CORRECT_PLACEMENT")) {
+                    LOGGER.info("GAME OVER LOSE");
+                    setGameOver("Game over. You lose... \nThe correct code: " + secretCode.toString());
+                    setCodeLength(0);
+                }
                 LOGGER.info("SecretCode: " + secretCode + ", Guess: " + guess + ", Status: " + result);
                 break;
             default:
@@ -67,40 +89,115 @@ public class CodeGuesserPresenter implements CustomActionListener {
 
     @Override
     public void actionPerformed(ActionType actionType, int codeLength) {
+        remainingGuessCount = calculateRemainingGuesses(codeLength);
+        secretCode = secretCodeGeneratorService.generateSecretCode(codeLength);
+        gameOver = "";
+        this.codeLength = 0;
         switch (actionType) {
             case NEW_GAME_EASY:
                 LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
                 LOGGER.info(ActionType.NEW_GAME_EASY.getText() + " was pressed.");
-                secretCode = secretCodeGeneratorService.generateSecretCode(codeLength);
-                remainingGuesses = calculateRemainingGuesses(codeLength);
                 gameMode = GameMode.EASY;
+                firePropertyChange("gameMode", null, gameMode);
                 LOGGER.info("Generated secret code=" + secretCode);
-                LOGGER.info("Remaining guesses: " + remainingGuesses);
+                LOGGER.info("Remaining guesses: " + remainingGuessCount);
                 break;
-             case NEW_GAME_MEDIUM:
-                 LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
-                 LOGGER.info(ActionType.NEW_GAME_MEDIUM.getText() + " was pressed.");
-                 secretCode = secretCodeGeneratorService.generateSecretCode(codeLength);
-                 remainingGuesses = calculateRemainingGuesses(codeLength);
-                 gameMode = GameMode.MEDIUM;
-                 LOGGER.info("Generated secret code=" + secretCode);
-                 LOGGER.info("Remaining guesses: " + remainingGuesses);
-                 break;
-             case NEW_GAME_HARD:
-                 LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
-                 LOGGER.info(ActionType.NEW_GAME_HARD.getText() + " was pressed.");
-                 secretCode = secretCodeGeneratorService.generateSecretCode(codeLength);
-                 remainingGuesses = calculateRemainingGuesses(codeLength);
-                 gameMode = GameMode.HARD;
-                 LOGGER.info("Generated secret code=" + secretCode);
-                 LOGGER.info("Remaining guesses: " + remainingGuesses);
-                 break;
+            case NEW_GAME_MEDIUM:
+                LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
+                LOGGER.info(ActionType.NEW_GAME_MEDIUM.getText() + " was pressed.");
+                gameMode = GameMode.MEDIUM;
+                firePropertyChange("gameMode", null, gameMode);
+                LOGGER.info("Generated secret code=" + secretCode);
+                LOGGER.info("Remaining guesses: " + remainingGuessCount);
+                break;
+            case NEW_GAME_HARD:
+                LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
+                LOGGER.info(ActionType.NEW_GAME_HARD.getText() + " was pressed.");
+                gameMode = GameMode.HARD;
+                firePropertyChange("gameMode", null, gameMode);
+                LOGGER.info("Generated secret code=" + secretCode);
+                LOGGER.info("Remaining guesses: " + remainingGuessCount);
+                break;
             default:
                 break;
         }
+        firePropertyChange("remainingGuessCount", null, remainingGuessCount);
+        setCodeLength(codeLength);
     }
 
     private int calculateRemainingGuesses(int codeLength) {
-        return 2*codeLength + codeLength/2;//2n+n/2
+        return 2*codeLength + codeLength/2;
+    }
+
+
+    public void setCodeLength(int codeLength) {
+        int oldValue = this.codeLength;
+        this.codeLength = codeLength;
+        firePropertyChange("codeLength", oldValue, codeLength);
+    }
+
+    public void setStatus(String status) {
+        String oldValue = this.status;
+        this.status = status;
+        firePropertyChange("status", oldValue, status);
+    }
+
+    public void decrementRemainingGuessCount() {
+        int old = remainingGuessCount;
+        remainingGuessCount--;
+        firePropertyChange("remainingGuessCount", old, remainingGuessCount);
+    }
+
+    private String parseStatus(List<GuessDigitStatusEnum> status) {
+        String statusString = "";
+        int goodCount = 0;
+        int containsCount = 0;
+        int wrongCount = 0;
+        int unknownCount = 0;
+        for(GuessDigitStatusEnum elem : status) {
+            switch (elem.name()) {
+                case "CORRECT_NUMBER_AND_CORRECT_PLACEMENT": {
+                    goodCount++;
+                    break;
+                }
+                case "CORRECT_NUMBER_AND_WRONG_PLACEMENT": {
+                    containsCount++;
+                    break;
+                }
+                case "WRONG": {
+                    wrongCount++;
+                    break;
+                }
+                case "UNKNOWN": {
+                    unknownCount++;
+                }
+            }
+        }
+        if(goodCount > 0) {
+            statusString += "Good: " + goodCount + ", ";
+        }
+        if(containsCount > 0) {
+            statusString += "Contains: " + containsCount + ", ";
+        }
+        if(wrongCount > 0) {
+            statusString += "Bad: " + wrongCount;
+        }
+        if(unknownCount > 0) {
+            statusString += "This gamemode we don't help you.";
+        }
+        return statusString;
+    }
+
+    private boolean containsOnlyGoodGuesses(List<GuessDigitStatusEnum> guessList) {
+        boolean result = true;
+        for(GuessDigitStatusEnum elem : guessList) {
+            result = result && elem.name().equals("CORRECT_NUMBER_AND_CORRECT_PLACEMENT");
+        }
+        return result;
+    }
+
+    private void setGameOver(String gameOver) {
+        this.gameOver = gameOver;
+        firePropertyChange("gameOver", "", gameOver);
     }
 }

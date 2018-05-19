@@ -4,13 +4,14 @@ import hu.edu.elte.codeguesser_view.action.ActionType;
 import hu.edu.elte.codeguesser_view.button.GameButton;
 import hu.edu.elte.codeguesser_view.button.SubmitButton;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
  * @author virabia on 5/10/2018
  */
-public interface CustomActionListener extends ActionListener {
+public interface CustomActionListener extends ActionListener, Action {
 
     @Override
     default void actionPerformed(ActionEvent actionEvent) {
@@ -30,5 +31,4 @@ public interface CustomActionListener extends ActionListener {
     void actionPerformed(ActionType actionType, String guess);
 
     void actionPerformed(ActionType actionType, int codeLength);
-
 }
