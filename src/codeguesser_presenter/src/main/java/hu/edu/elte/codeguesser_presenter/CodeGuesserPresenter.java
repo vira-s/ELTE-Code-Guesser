@@ -6,15 +6,16 @@ import hu.edu.elte.codeguesser_presenter.services.GuessDigitStatusCalculatorServ
 import hu.edu.elte.codeguesser_presenter.services.SecretCodeGeneratorService;
 import hu.edu.elte.codeguesser_presenter.services.SecretCodeGeneratorServiceImpl;
 import hu.edu.elte.codeguesser_presenter.utils.GameMode;
+import hu.edu.elte.codeguesser_view.utils.PropertyName;
 import hu.edu.elte.codeguesser_view.action.ActionType;
 import hu.edu.elte.codeguesser_view.listeners.CustomActionListener;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractAction;
 import java.util.List;
 
-import static hu.edu.elte.codeguesser_model.GuessDigitStatusEnum.CONTAINING_NUMBER;
 import static hu.edu.elte.codeguesser_model.GuessDigitStatusEnum.CORRECT_PLACEMENT;
 
 /**
@@ -22,7 +23,9 @@ import static hu.edu.elte.codeguesser_model.GuessDigitStatusEnum.CORRECT_PLACEME
  */
 public class CodeGuesserPresenter extends AbstractAction implements CustomActionListener {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(CodeGuesserPresenter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CodeGuesserPresenter.class);
+
+    private static final String OLD_VALUE_MARKER = "_OLD";
 
     private final GuessDigitStatusCalculatorService guessDigitStatusCalculatorService;
 
@@ -100,7 +103,7 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
                 LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
                 LOGGER.info(ActionType.NEW_GAME_EASY.getText() + " was pressed.");
                 gameMode = GameMode.EASY;
-                firePropertyChange("gameMode", null, gameMode);
+                firePropertyChange(PropertyName.GAME_MODE.getText(), null, gameMode);
                 LOGGER.info("Generated secret code=" + secretCode);
                 LOGGER.info("Remaining guesses: " + remainingGuessCount);
                 break;
@@ -108,7 +111,7 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
                 LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
                 LOGGER.info(ActionType.NEW_GAME_MEDIUM.getText() + " was pressed.");
                 gameMode = GameMode.MEDIUM;
-                firePropertyChange("gameMode", null, gameMode);
+                firePropertyChange(PropertyName.GAME_MODE.getText(), null, gameMode);
                 LOGGER.info("Generated secret code=" + secretCode);
                 LOGGER.info("Remaining guesses: " + remainingGuessCount);
                 break;
@@ -116,14 +119,14 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
                 LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
                 LOGGER.info(ActionType.NEW_GAME_HARD.getText() + " was pressed.");
                 gameMode = GameMode.HARD;
-                firePropertyChange("gameMode", null, gameMode);
+                firePropertyChange(PropertyName.GAME_MODE.getText(), null, gameMode);
                 LOGGER.info("Generated secret code=" + secretCode);
                 LOGGER.info("Remaining guesses: " + remainingGuessCount);
                 break;
             default:
                 break;
         }
-        firePropertyChange("remainingGuessCount", null, remainingGuessCount);
+        firePropertyChange(PropertyName.REMAINING_GUESSES_COUNT.getText(), null, remainingGuessCount);
         setCodeLength(codeLength);
     }
 
@@ -135,23 +138,26 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
     private void setCodeLength(int codeLength) {
         int oldValue = this.codeLength;
         this.codeLength = codeLength;
-        firePropertyChange("codeLength", oldValue, codeLength);
+        firePropertyChange(PropertyName.CODE_LENGTH.getText(), oldValue, codeLength);
     }
 
     private void setStatus(String status) {
-        String oldValue = this.status;
+        String oldValue = StringUtils.isBlank(this.status)
+                ? OLD_VALUE_MARKER
+                : this.status.concat("_OLD");
         this.status = status;
-        firePropertyChange("status", oldValue, status);
+        firePropertyChange(PropertyName.STATUS.getText(), oldValue, status);
     }
 
     private void decrementRemainingGuessCount() {
         int old = remainingGuessCount;
         remainingGuessCount--;
-        firePropertyChange("remainingGuessCount", old, remainingGuessCount);
+        firePropertyChange(PropertyName.REMAINING_GUESSES_COUNT.getText(), old, remainingGuessCount);
     }
 
     private String parseStatus(List<GuessDigitStatusEnum> status) {
-        String statusString = "";
+        StringBuilder statusString = new StringBuilder("");
+
         int goodCount = 0;
         int containsCount = 0;
         int wrongCount = 0;
@@ -176,18 +182,18 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
             }
         }
         if(goodCount > 0) {
-            statusString += "Good: " + goodCount + ", ";
+            statusString.append("Good: ").append(goodCount).append(", ");
         }
         if(containsCount > 0) {
-            statusString += "Contains: " + containsCount + ", ";
+            statusString.append("Contains: ").append(containsCount).append(", ");
         }
         if(wrongCount > 0) {
-            statusString += "Bad: " + wrongCount;
+            statusString.append("Bad: ").append(wrongCount);
         }
         if(unknownCount > 0) {
-            statusString += "Unknown: " + unknownCount;
+            statusString.append("Unknown: ").append(unknownCount);
         }
-        return statusString;
+        return statusString.toString();
     }
 
     private boolean containsOnlyGoodGuesses(List<GuessDigitStatusEnum> guessList) {
@@ -200,6 +206,6 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
 
     private void setGameOver(String gameOver) {
         this.gameOver = gameOver;
-        firePropertyChange("gameOver", "", gameOver);
+        firePropertyChange(PropertyName.GAME_OVER.getText(), "", gameOver);
     }
 }
