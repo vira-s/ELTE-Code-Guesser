@@ -15,3 +15,5 @@ sudo: false
 git:
   depth: false
 
+before_script:
+  - _JAVA_OPTIONS=

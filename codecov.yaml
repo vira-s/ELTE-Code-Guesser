@@ -5,12 +5,18 @@ codecov:
 coverage:
   precision: 2
   round: down
-  range: "40...100"
-
   status:
-    project: yes
-    patch: yes
-    changes: no
+    project:
+      default:
+       if_not_found: success
+    patch:
+      default:
+        enabled: no
+        if_not_found: success
+    changes:
+      default:
+        enabled: no
+        if_not_found: success
 
 parsers:
   gcov:
