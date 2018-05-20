@@ -11,8 +11,11 @@ import hu.edu.elte.codeguesser_view.listeners.CustomActionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
 import java.util.List;
+
+import static hu.edu.elte.codeguesser_model.GuessDigitStatusEnum.CONTAINING_NUMBER;
+import static hu.edu.elte.codeguesser_model.GuessDigitStatusEnum.CORRECT_PLACEMENT;
 
 /**
  * @author virabia on 5/10/2018
@@ -51,9 +54,8 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
                 break;
             case GIVE_UP:
                 LOGGER.info(ActionType.GIVE_UP.getText() + " was pressed.");
-                setGameOver("Game over. You lose... \nThe correct code: " + secretCode.toString());
+                setGameOver("Game over. You lose... \nThe correct code: " + secretCode);
                 setCodeLength(0);
-               // System.exit(0);
                 break;
             default:
                 break;
@@ -70,14 +72,14 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
                 String statusString = parseStatus(result);
                 setStatus(statusString);
                 decrementRemainingGuessCount();
-                if(containsOnlyGoodGuesses(result)) {
+                if (containsOnlyGoodGuesses(result)) {
                     LOGGER.info("GAME OVER WIN");
                     setGameOver("You win!");
                     setCodeLength(0);
 
-                } else if(remainingGuessCount == 0 && !result.contains("CORRECT_NUMBER_AND_CORRECT_PLACEMENT")) {
+                } else if (remainingGuessCount == 0 && !result.contains(CORRECT_PLACEMENT)) {
                     LOGGER.info("GAME OVER LOSE");
-                    setGameOver("Game over. You lose... \nThe correct code: " + secretCode.toString());
+                    setGameOver("Game over. You lose... \nThe correct code: " + secretCode);
                     setCodeLength(0);
                 }
                 LOGGER.info("SecretCode: " + secretCode + ", Guess: " + guess + ", Status: " + result);
@@ -130,19 +132,19 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
     }
 
 
-    public void setCodeLength(int codeLength) {
+    private void setCodeLength(int codeLength) {
         int oldValue = this.codeLength;
         this.codeLength = codeLength;
         firePropertyChange("codeLength", oldValue, codeLength);
     }
 
-    public void setStatus(String status) {
+    private void setStatus(String status) {
         String oldValue = this.status;
         this.status = status;
         firePropertyChange("status", oldValue, status);
     }
 
-    public void decrementRemainingGuessCount() {
+    private void decrementRemainingGuessCount() {
         int old = remainingGuessCount;
         remainingGuessCount--;
         firePropertyChange("remainingGuessCount", old, remainingGuessCount);
@@ -155,20 +157,20 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
         int wrongCount = 0;
         int unknownCount = 0;
         for(GuessDigitStatusEnum elem : status) {
-            switch (elem.name()) {
-                case "CORRECT_NUMBER_AND_CORRECT_PLACEMENT": {
+            switch (elem) {
+                case CORRECT_PLACEMENT: {
                     goodCount++;
                     break;
                 }
-                case "CORRECT_NUMBER_AND_WRONG_PLACEMENT": {
+                case CONTAINING_NUMBER: {
                     containsCount++;
                     break;
                 }
-                case "WRONG": {
+                case WRONG: {
                     wrongCount++;
                     break;
                 }
-                case "UNKNOWN": {
+                case UNKNOWN: {
                     unknownCount++;
                 }
             }
@@ -183,7 +185,7 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
             statusString += "Bad: " + wrongCount;
         }
         if(unknownCount > 0) {
-            statusString += "This gamemode we don't help you.";
+            statusString += "Unknown: " + unknownCount;
         }
         return statusString;
     }
@@ -191,7 +193,7 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
     private boolean containsOnlyGoodGuesses(List<GuessDigitStatusEnum> guessList) {
         boolean result = true;
         for(GuessDigitStatusEnum elem : guessList) {
-            result = result && elem.name().equals("CORRECT_NUMBER_AND_CORRECT_PLACEMENT");
+            result = result && elem == CORRECT_PLACEMENT;
         }
         return result;
     }

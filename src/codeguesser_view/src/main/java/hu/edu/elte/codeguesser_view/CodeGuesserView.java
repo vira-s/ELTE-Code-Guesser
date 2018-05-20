@@ -6,6 +6,7 @@ import hu.edu.elte.codeguesser_view.button.SubmitButton;
 import hu.edu.elte.codeguesser_view.listeners.CustomActionListener;
 import hu.edu.elte.codeguesser_view.listeners.CustomWindowListener;
 import hu.edu.elte.codeguesser_view.menu.GameMenu;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
@@ -16,6 +17,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Objects;
 
 /**
  * @author virabia on 5/10/2018
@@ -48,44 +50,54 @@ public class CodeGuesserView extends JFrame {
         setSize(800, 600);
 
         this.actionListener = actionListener;
-        this.actionListener.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                switch (evt.getPropertyName()) {
-                    case "codeLength": {
-                        guessLength = ((int) evt.getNewValue());
-                        if(guessLength == 0)
-                            return;
-                        gameInfoString += "Code Length: " + evt.getNewValue();
-                        gameInfo.setText(gameInfoString);
-                        guessNumbers.setDocument(new JTextFieldLimit(guessLength));
-                        panel.setVisible(true);
-                        break;
+        this.actionListener.addPropertyChangeListener(event -> {
+            switch (event.getPropertyName()) {
+                case "codeLength": {
+                    guessLength = ((int) event.getNewValue());
+                    if(guessLength == 0) {
+                        return;
                     }
-                    case "status": {
-                        previousGuesses.append(guessNumbers.getText() + " - " + evt.getNewValue()+"\n");
-                        guessNumbers.setText("");
-                        break;
-                    }
-                    case "remainingGuessCount": {
-                        remainingGuess.setText("Remaining: " + evt.getNewValue());
-                        gameInfoString += "Maximal numbers of guesses available: " + evt.getNewValue() + " | ";
-                        break;
-                    }
-                    case "gameMode": {
+                    gameInfoString += "Code Length: " + event.getNewValue();
+                    gameInfo.setText(gameInfoString);
+                    guessNumbers.setDocument(new JTextFieldLimit(guessLength));
+                    panel.setVisible(true);
+
+                    panel.validate();
+                    validate();
+                    break;
+                }
+                case "status": {
+                    previousGuesses.append(guessNumbers.getText() + " - " + event.getNewValue()+"\n");
+                    guessNumbers.setText("");
+
+                    validate();
+                    break;
+                }
+                case "remainingGuessCount": {
+                    remainingGuess.setText("Remaining: " + event.getNewValue());
+                    gameInfoString += "Maximal number of guesses available: " + event.getNewValue() + " | ";
+
+                    validate();
+                    break;
+                }
+                case "gameMode": {
+                    previousGuesses.setText("Previous Guesses: \n");
+                    gameInfoString = "Game level: " + event.getNewValue() + " | ";
+
+                    validate();
+                    break;
+                }
+                case "gameOver": {
+                    if(!Objects.isNull(event.getNewValue()) && StringUtils.isNotBlank((String) event.getNewValue())) {
+                        JOptionPane.showMessageDialog(self, event.getNewValue());
+                        gameInfo.setText("");
                         previousGuesses.setText("Previous Guesses: \n");
-                        gameInfoString = "Game level: " + evt.getNewValue() + " | ";
-                        break;
+
+                        panel.setVisible(false);
+
+                        validate();
                     }
-                    case "gameOver": {
-                        if(evt.getNewValue() != null && !"".equals(evt.getNewValue())) {
-                            JOptionPane.showMessageDialog(self, evt.getNewValue());
-                            gameInfo.setText("");
-                            previousGuesses.setText("Previous Guesses: \n");
-                            panel.setVisible(false);
-                        }
-                        break;
-                    }
+                    break;
                 }
             }
         });
@@ -94,6 +106,8 @@ public class CodeGuesserView extends JFrame {
         setJMenuBar(new GameMenu(this));
         initializeWindow();
         panel.setVisible(false);
+
+        validate();
     }
 
     public CustomActionListener getActionListener() {
@@ -121,10 +135,10 @@ public class CodeGuesserView extends JFrame {
         panel.add(giveUp);
 
         initializeSubmitButton(guessNumbers);
-        //idk miért nem működik máshogy
         submitGuess.setText(ActionType.SUBMIT.getText());
 
         this.add(panel);
+        validate();
         panel.updateUI();
     }
 
@@ -133,7 +147,6 @@ public class CodeGuesserView extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 submitGuess.setGuessToSend(guess.getText());
-                //guess.setText("");
             }
         });
     }

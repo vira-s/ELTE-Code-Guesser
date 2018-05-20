@@ -111,19 +111,24 @@ public class GuessDigitStatusCalculatorServiceImpl implements GuessDigitStatusCa
         int codeLength = secretCode.length();
         List<GuessDigitStatusEnum> guessDigitStatuses = new ArrayList<>();
 
-        for (int i = 0; i < codeLength; ++i) {
-            String currentGuessDigit = String.valueOf(guess.charAt(i));
+        if (secretCode.equals(guess)) {
+            guessDigitStatuses = Collections.nCopies(codeLength, GuessDigitStatusEnum.CORRECT_PLACEMENT);
+        } else {
 
-            if (!currentGuessDigit.equals(String.valueOf(MATCHED_DIGIT_MARKER))
-                    && secretCode.contains(currentGuessDigit)) {
-                secretCode = replaceDigitWithMatchedMarkerAtIndex(secretCode, secretCode.indexOf(currentGuessDigit));
-                guess = replaceDigitWithMatchedMarkerAtIndex(guess, i);
+            for (int i = 0; i < codeLength; ++i) {
+                String currentGuessDigit = String.valueOf(guess.charAt(i));
 
-                guessDigitStatuses.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
+                if (!currentGuessDigit.equals(String.valueOf(MATCHED_DIGIT_MARKER))
+                        && secretCode.contains(currentGuessDigit)) {
+                    secretCode = replaceDigitWithMatchedMarkerAtIndex(secretCode, secretCode.indexOf(currentGuessDigit));
+                    guess = replaceDigitWithMatchedMarkerAtIndex(guess, i);
 
-            } else if (!currentGuessDigit.equals(String.valueOf(MATCHED_DIGIT_MARKER))
-                    && !secretCode.contains(currentGuessDigit)) {
-                guessDigitStatuses.add(statusForMismatch);
+                    guessDigitStatuses.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
+
+                } else if (!currentGuessDigit.equals(String.valueOf(MATCHED_DIGIT_MARKER))
+                        && !secretCode.contains(currentGuessDigit)) {
+                    guessDigitStatuses.add(statusForMismatch);
+                }
             }
         }
 
