@@ -7,10 +7,7 @@ import hu.edu.elte.codeguesser_view.listeners.CustomActionListener;
 import hu.edu.elte.codeguesser_view.listeners.CustomWindowListener;
 import hu.edu.elte.codeguesser_view.menu.GameMenu;
 
-import javax.swing.AbstractAction;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
@@ -25,9 +22,12 @@ public class CodeGuesserView extends JFrame {
     private CustomWindowListener windowListener;
     private JPanel panel;
 
-    private GameButton exitButton;
-    private SubmitButton submitButton;
-    private GameButton newGameButton;
+    private JTextField gameInfo;
+    private JTextArea previousGuesses;
+    private JTextField guessNumbers;
+    private SubmitButton submitGuess;
+    private JTextField remainingGuess;
+    private GameButton giveUp;
 
     public CodeGuesserView(CustomActionListener actionListener) {
         super(WINDOW_TITLE);
@@ -50,28 +50,35 @@ public class CodeGuesserView extends JFrame {
 
         setJMenuBar(new GameMenu(this));
 
-        JLabel label = new JLabel("333333");
-        initializeSubmitButton(label);
+        gameInfo = new JTextField();
+        previousGuesses = new JTextArea();
+        guessNumbers = new JTextField();
+        submitGuess = new SubmitButton(ActionType.SUBMIT,actionListener);
+        remainingGuess = new JTextField();
+        giveUp = new GameButton(ActionType.GIVE_UP,actionListener);
 
-        newGameButton = new GameButton(ActionType.NEW_GAME_MEDIUM, actionListener);
-        exitButton = new GameButton(ActionType.EXIT, actionListener);
+        initializeSubmitButton(guessNumbers);
 
         panel = new JPanel();
-        panel.setLayout(new GridLayout(1, 1));
-        panel.add(exitButton);
-        panel.add(submitButton);
-        panel.add(newGameButton);
-        panel.add(label);
+        panel.setLayout(new GridLayout(6, 1));
+
+        panel.add(gameInfo);
+        panel.add(previousGuesses);
+        panel.add(guessNumbers);
+        panel.add(submitGuess);
+        panel.add(remainingGuess);
+        panel.add(giveUp);
 
         this.add(panel);
     }
 
-    private void initializeSubmitButton(JLabel label) {
-        submitButton = new SubmitButton(ActionType.SUBMIT, actionListener);
-        submitButton.setAction(new AbstractAction() {
+    private void initializeSubmitButton(JTextField guess) {
+        submitGuess = new SubmitButton(ActionType.SUBMIT, actionListener);
+        submitGuess.setAction(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                submitButton.setGuessToSend(label.getText());
+                submitGuess.setGuessToSend(guess.getText());
+                previousGuesses.setText(guess.getText());
             }
         });
     }

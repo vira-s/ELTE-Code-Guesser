@@ -28,6 +28,8 @@ public class CodeGuesserPresenter implements CustomActionListener {
 
     private String secretCode;
 
+    private int remainingGuesses;
+
     public CodeGuesserPresenter() {
         this.guessDigitStatusCalculatorService = new GuessDigitStatusCalculatorServiceImpl();
         this.secretCodeGeneratorService = new SecretCodeGeneratorServiceImpl();
@@ -70,16 +72,35 @@ public class CodeGuesserPresenter implements CustomActionListener {
                 LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
                 LOGGER.info(ActionType.NEW_GAME_EASY.getText() + " was pressed.");
                 secretCode = secretCodeGeneratorService.generateSecretCode(codeLength);
+                remainingGuesses = calculateRemainingGuesses(codeLength);
                 gameMode = GameMode.EASY;
                 LOGGER.info("Generated secret code=" + secretCode);
+                LOGGER.info("Remaining guesses: " + remainingGuesses);
                 break;
-            //TODO missing implementation
-            // case NEW_GAME_MEDIUM:
-            //     break;
-            // case NEW_GAME_HARD:
-            //     break;
+             case NEW_GAME_MEDIUM:
+                 LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
+                 LOGGER.info(ActionType.NEW_GAME_MEDIUM.getText() + " was pressed.");
+                 secretCode = secretCodeGeneratorService.generateSecretCode(codeLength);
+                 remainingGuesses = calculateRemainingGuesses(codeLength);
+                 gameMode = GameMode.MEDIUM;
+                 LOGGER.info("Generated secret code=" + secretCode);
+                 LOGGER.info("Remaining guesses: " + remainingGuesses);
+                 break;
+             case NEW_GAME_HARD:
+                 LOGGER.info("Received actionType=" + actionType + ", codeLength=" + codeLength);
+                 LOGGER.info(ActionType.NEW_GAME_HARD.getText() + " was pressed.");
+                 secretCode = secretCodeGeneratorService.generateSecretCode(codeLength);
+                 remainingGuesses = calculateRemainingGuesses(codeLength);
+                 gameMode = GameMode.HARD;
+                 LOGGER.info("Generated secret code=" + secretCode);
+                 LOGGER.info("Remaining guesses: " + remainingGuesses);
+                 break;
             default:
                 break;
         }
+    }
+
+    private int calculateRemainingGuesses(int codeLength) {
+        return 2*codeLength + codeLength/2;//2n+n/2
     }
 }
