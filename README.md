@@ -38,6 +38,6 @@ Coverage:
 Az osztályok lefedettségének mértéke:
 src/codeguesser_presenter/target/site/jacoco/index.html
 
-
+Generált javadoc található a javadoc mappában
 
 
