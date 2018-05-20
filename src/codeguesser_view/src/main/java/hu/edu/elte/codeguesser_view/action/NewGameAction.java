@@ -1,5 +1,6 @@
 package hu.edu.elte.codeguesser_view.action;
 
+import hu.edu.elte.codeguesser_view.CodeGuesserView;
 import hu.edu.elte.codeguesser_view.listeners.CustomActionListener;
 import hu.edu.elte.codeguesser_view.menu.GameModeMenuItem;
 import org.apache.commons.lang3.StringUtils;
@@ -23,17 +24,22 @@ public class NewGameAction extends AbstractAction {
 
     private static final Integer[] POSSIBILITIES = {3, 4, 5, 6, 7, 8, 9, 10};
 
+    private final CodeGuesserView parentView;
+
     private ActionType actionType;
 
     private int codeLength;
 
-    public NewGameAction(ActionType actionType) {
+    public NewGameAction(ActionType actionType, CodeGuesserView parentView) {
         this.actionType = actionType;
+        this.parentView = parentView;
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
         LOGGER.info("About to start new game.");
+
+        parentView.destroyView();
 
         String answer = String.valueOf(JOptionPane.showInputDialog(null, "Are you sure, you want to start a new game?", "New Game",
                 JOptionPane.QUESTION_MESSAGE, null, POSSIBILITIES, POSSIBILITIES[0]));

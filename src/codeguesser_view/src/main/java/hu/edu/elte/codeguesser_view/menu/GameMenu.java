@@ -41,14 +41,14 @@ public class GameMenu extends JMenuBar {
                         new ExitAction());
             case NEW_GAME_EASY:
                 return new GameModeMenuItem(actionType.getText(), actionType.name().charAt(9), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_MASK),
-                        new NewGameAction(actionType), actionType, parentView.getActionListener());
+                        new NewGameAction(actionType, parentView), actionType, parentView.getActionListener());
 
             case NEW_GAME_MEDIUM:
                 return new GameModeMenuItem(actionType.getText(), actionType.name().charAt(9), KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyEvent.CTRL_MASK),
-                        new NewGameAction(actionType), actionType, parentView.getActionListener());
+                        new NewGameAction(actionType, parentView), actionType, parentView.getActionListener());
             case NEW_GAME_HARD:
                 return new GameModeMenuItem(actionType.getText(), actionType.name().charAt(9), KeyStroke.getKeyStroke(KeyEvent.VK_H, KeyEvent.CTRL_MASK),
-                        new NewGameAction(actionType), actionType, parentView.getActionListener());
+                        new NewGameAction(actionType, parentView), actionType, parentView.getActionListener());
             default:
                 return null;
         }

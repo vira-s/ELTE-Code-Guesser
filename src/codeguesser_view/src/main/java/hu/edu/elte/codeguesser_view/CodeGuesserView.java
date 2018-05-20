@@ -11,12 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Objects;
 
 /**
@@ -28,27 +27,50 @@ public class CodeGuesserView extends JFrame {
 
     private CustomActionListener actionListener;
     private CustomWindowListener windowListener;
-    private JPanel panel;
+    private JPanel gamePanel;
+    GridBagConstraints gridBagConstraints;
     private int guessLength;
 
-    private JTextField gameInfo;
     private String gameInfoString;
     private JTextArea previousGuesses;
     private JTextField guessNumbers;
     private SubmitButton submitGuess;
-    private JTextField remainingGuess;
+    private JLabel remainingGuess;
+    private JLabel maximalGuess;
+    private JLabel gameLevel;
+    private JLabel codeLength;
     private GameButton giveUp;
-
-    private CodeGuesserView self;
-
 
     public CodeGuesserView(CustomActionListener actionListener) {
         super(WINDOW_TITLE);
-        self = this;
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1000, 700);
 
+        initializeActionListener(actionListener);
+
+        this.windowListener = new CustomWindowListener();
+        addWindowListener(windowListener);
+        setJMenuBar(new GameMenu(this));
+
+        initializeGamePanel();
+        initializeWindow();
+
+        validate();
+    }
+
+    private void initializeGamePanel() {
+        gamePanel = new JPanel();
+        gamePanel.setLayout(new GridBagLayout());
+        gridBagConstraints = new GridBagConstraints();
+
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.5;
+
+        gamePanel.setVisible(false);
+    }
+
+    private void initializeActionListener(CustomActionListener actionListener) {
         this.actionListener = actionListener;
         this.actionListener.addPropertyChangeListener(event -> {
             switch (event.getPropertyName()) {
@@ -57,57 +79,85 @@ public class CodeGuesserView extends JFrame {
                     if(guessLength == 0) {
                         return;
                     }
-                    gameInfoString += "Code Length: " + event.getNewValue();
-                    gameInfo.setText(gameInfoString);
                     guessNumbers.setDocument(new JTextFieldLimit(guessLength));
-                    panel.setVisible(true);
+                    guessNumbers.setColumns(13);
 
-                    panel.validate();
+                    gamePanel.remove(guessNumbers);
+                    gridBagConstraints.gridx = 1;
+                    gridBagConstraints.gridy = 2;
+                    gamePanel.add(guessNumbers, gridBagConstraints);
+
+                    gamePanel.setVisible(true);
+
+                    codeLength.setText("Code Length: " + guessLength);
+                    gamePanel.remove(codeLength);
+                    gridBagConstraints.gridx = 1;
+                    gridBagConstraints.gridy = 0;
+                    gamePanel.add(codeLength, gridBagConstraints);
+
+                    gamePanel.validate();
                     validate();
                     break;
                 }
                 case "status": {
                     previousGuesses.append(guessNumbers.getText() + " - " + event.getNewValue()+"\n");
-                    guessNumbers.setText("");
 
+                    guessNumbers.setText("");
+                    guessNumbers.setColumns(13);
                     validate();
                     break;
                 }
                 case "remainingGuessCount": {
                     remainingGuess.setText("Remaining: " + event.getNewValue());
-                    gameInfoString += "Maximal number of guesses available: " + event.getNewValue() + " | ";
+
+                    gamePanel.remove(remainingGuess);
+                    gridBagConstraints.gridx = 1;
+                    gridBagConstraints.gridy = 4;
+                    gamePanel.add(remainingGuess, gridBagConstraints);
+
+                    if(StringUtils.isBlank(maximalGuess.getText())) {
+                        maximalGuess.setText("Maximal number of guesses available: " + event.getNewValue());
+
+                        gamePanel.remove(maximalGuess);
+                        gridBagConstraints.gridx = 2;
+                        gridBagConstraints.gridy = 0;
+                        gamePanel.add(maximalGuess, gridBagConstraints);
+                    }
 
                     validate();
                     break;
                 }
                 case "gameMode": {
-                    previousGuesses.setText("Previous Guesses: \n");
-                    gameInfoString = "Game level: " + event.getNewValue() + " | ";
+                    previousGuesses = new JTextArea("--------------------------------------------Previous Guesses:--------------------------------------------\n");
+                    previousGuesses.setEditable(false);
+                    previousGuesses.setRows(26);
+
+                    gamePanel.remove(previousGuesses);
+                    gridBagConstraints.gridx = 1;
+                    gridBagConstraints.gridy = 1;
+                    gamePanel.add(previousGuesses, gridBagConstraints);
+
+                    gameLevel.setText("Game level: " + event.getNewValue());
+                    gamePanel.remove(gameLevel);
+                    gridBagConstraints.gridx = 0;
+                    gridBagConstraints.gridy = 0;
+                    gamePanel.add(gameLevel, gridBagConstraints);
 
                     validate();
                     break;
                 }
                 case "gameOver": {
                     if(!Objects.isNull(event.getNewValue()) && StringUtils.isNotBlank((String) event.getNewValue())) {
-                        JOptionPane.showMessageDialog(self, event.getNewValue());
-                        gameInfo.setText("");
-                        previousGuesses.setText("Previous Guesses: \n");
+                        JOptionPane.showMessageDialog(this, event.getNewValue());
 
-                        panel.setVisible(false);
-
+                        gamePanel.setVisible(false);
+                        gamePanel.removeAll();
                         validate();
                     }
                     break;
                 }
             }
         });
-        this.windowListener = new CustomWindowListener();
-        addWindowListener(windowListener);
-        setJMenuBar(new GameMenu(this));
-        initializeWindow();
-        panel.setVisible(false);
-
-        validate();
     }
 
     public CustomActionListener getActionListener() {
@@ -116,39 +166,59 @@ public class CodeGuesserView extends JFrame {
 
     private void initializeWindow() {
 
-        gameInfo = new JTextField();
-        previousGuesses = new JTextArea("Previous Guesses: \n");
+        previousGuesses = new JTextArea();
         guessNumbers = new JTextField();
-        remainingGuess = new JTextField();
-        giveUp = new GameButton(ActionType.GIVE_UP,actionListener);
-        submitGuess = new SubmitButton(ActionType.SUBMIT, actionListener);
-
-
-        panel = new JPanel();
-        panel.setLayout(new GridLayout(6, 1));
-
-        panel.add(gameInfo);
-        panel.add(previousGuesses);
-        panel.add(guessNumbers);
-        panel.add(submitGuess);
-        panel.add(remainingGuess);
-        panel.add(giveUp);
+        remainingGuess = new JLabel();
+        maximalGuess = new JLabel();
+        gameLevel = new JLabel();
+        codeLength = new JLabel();
 
         initializeSubmitButton(guessNumbers);
-        submitGuess.setText(ActionType.SUBMIT.getText());
+        initializeGiveUpButton();
 
-        this.add(panel);
+        this.add(gamePanel);
         validate();
-        panel.updateUI();
+        gamePanel.updateUI();
     }
 
     private void initializeSubmitButton(JTextField guess) {
+        submitGuess = new SubmitButton(ActionType.SUBMIT, actionListener);
+
+        gamePanel.remove(submitGuess);
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gamePanel.add(submitGuess, gridBagConstraints);
+
         submitGuess.setAction(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 submitGuess.setGuessToSend(guess.getText());
+
+                gamePanel.remove(submitGuess);
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 3;
+                gamePanel.add(submitGuess, gridBagConstraints);
             }
         });
+
+        submitGuess.setText(ActionType.SUBMIT.getText());
+    }
+
+    private void initializeGiveUpButton() {
+        giveUp = new GameButton(ActionType.GIVE_UP,actionListener);
+
+        gamePanel.remove(giveUp);
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        gamePanel.add(giveUp, gridBagConstraints);
+    }
+
+    public void destroyView() {
+        gamePanel.removeAll();
+
+        initializeGamePanel();
+        initializeWindow();
+
     }
 
     private class JTextFieldLimit extends PlainDocument {
