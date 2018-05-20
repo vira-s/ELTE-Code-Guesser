@@ -90,7 +90,7 @@ public class GuessDigitStatusCalculatorServiceImpl implements GuessDigitStatusCa
                 secretCode = replaceDigitWithMatchedMarkerAtIndex(secretCode, i);
                 guess = replaceDigitWithMatchedMarkerAtIndex(guess, i);
 
-                guessDigitStatuses.add(GuessDigitStatusEnum.CORRECT_NUMBER_AND_CORRECT_PLACEMENT);
+                guessDigitStatuses.add(GuessDigitStatusEnum.CORRECT_PLACEMENT);
             } else {
                 guessDigitStatuses.add(statusForMismatch);
             }
@@ -119,7 +119,7 @@ public class GuessDigitStatusCalculatorServiceImpl implements GuessDigitStatusCa
                 secretCode = replaceDigitWithMatchedMarkerAtIndex(secretCode, secretCode.indexOf(currentGuessDigit));
                 guess = replaceDigitWithMatchedMarkerAtIndex(guess, i);
 
-                guessDigitStatuses.add(GuessDigitStatusEnum.CORRECT_NUMBER_AND_WRONG_PLACEMENT);
+                guessDigitStatuses.add(GuessDigitStatusEnum.CONTAINING_NUMBER);
 
             } else if (!currentGuessDigit.equals(String.valueOf(MATCHED_DIGIT_MARKER))
                     && !secretCode.contains(currentGuessDigit)) {
@@ -171,7 +171,10 @@ public class GuessDigitStatusCalculatorServiceImpl implements GuessDigitStatusCa
 
     private void validateCodes(String secretCode, String guess) {
         Assert.isTrue(StringUtils.isNotBlank(secretCode), "Secret code must not be blank.");
+        Assert.isTrue(StringUtils.isNumeric(secretCode), "Secret code must be a positive integer.");
         Assert.isTrue(StringUtils.isNotBlank(guess), "Guess must not be blank.");
+        Assert.isTrue(StringUtils.isNumeric(guess), "Guess must be a positive integer.");
+        Assert.isTrue(!guess.matches("0[0-9]{1,9}"), "Guess must not start with zero.");
         Assert.isTrue(secretCode.length() == guess.length(), "Guess must be exactly as long as the secret code. "
                 + "Expected: " + secretCode.length() + " Actual: " + guess.length());
     }
