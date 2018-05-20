@@ -7,8 +7,6 @@ cache:
 
 script:
  - mvn clean install
-after_success:
- - bash <(curl -s https://codecov.io/bash)
 
 sudo: false
 git:
@@ -16,3 +14,6 @@ git:
 
 before_script:
   - _JAVA_OPTIONS=
+
+after_success:
+  - mvn jacoco:report coveralls:report
