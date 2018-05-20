@@ -80,7 +80,7 @@ public class CodeGuesserPresenter extends AbstractAction implements CustomAction
                     setGameOver("You win!");
                     setCodeLength(0);
 
-                } else if (remainingGuessCount == 0 && !result.contains(CORRECT_PLACEMENT)) {
+                } else if (remainingGuessCount == 0) {
                     LOGGER.info("GAME OVER LOSE");
                     setGameOver("Game over. You lose... \nThe correct code: " + secretCode);
                     setCodeLength(0);
