@@ -1,0 +1,10 @@
+hu.edu.elte.codeguesser_model
+hu.edu.elte.codeguesser_presenter
+hu.edu.elte.codeguesser_presenter.services
+hu.edu.elte.codeguesser_presenter.utils
+hu.edu.elte.codeguesser_view
+hu.edu.elte.codeguesser_view.action
+hu.edu.elte.codeguesser_view.button
+hu.edu.elte.codeguesser_view.dialogs
+hu.edu.elte.codeguesser_view.listeners
+hu.edu.elte.codeguesser_view.menu
