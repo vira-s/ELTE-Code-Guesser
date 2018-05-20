@@ -1,14 +1,13 @@
 # ELTE-Code-Guesser
 
 A játék elindítása:
-Nyissuk meg a parancssort és gépeljük be az mvn clean install parancsot, majd lépjünk be a .../ELTE-Code-Guesser/src/codeguesser_presenter/target/ mappába és írjuk be, hogy: java -jar codeguesser_presenter.jar
-ELTE-Code-Guesser mappában állva pedig így tudjuk futtatni a .jar fájlt: java -jar src/codeguesser_presenter/target/codeguesser_presenter.jar
+Nyissuk meg a parancssort és gépeljük be az mvn clean install parancsot, majd csak ezek után futtassuk a .../ELTE-Code-Guesser/src/codeguesser_presenter/target/ mappában a: java -jar codeguesser_presenter.jar, ha pedig az ELTE-Code-Guesser mappában állunk, akkor így tudjuk futtatni a .jar fájlt: java -jar src/codeguesser_presenter/target/codeguesser_presenter.jar
 
 A játék lényege:
 A játék mûködése megfelel az angol MasterMind nevû játéknak, melyben színeket kell eredetileg kitalálni, a mi programunkban viszont számokat kell kitalálni. A játékban az a feladatunk, hogy a számítógép által random kigenerált számokat és a számsorban való helyüket kell kitalálni. Több nehézségi foka is van, melyek a következõk:
-- könnyû: ha ezt a módot választjuk, akkor megkapjuk, hogy az általunk beírt számsorban melyik volt benne vagy melyik volt jó vagy mindkettõ
-- közepes: ha ezt a módot választjuk, akkor megkapjuk azt, hogy melyik szám volt benne a számsorban
-- nehéz: ha ezt a módot választjuk, akkor az általunk beírt számsorból csak azt kapjuk meg, hogy melyik szám van benne a számsorban és még jó helyen is van
+- könnyû: ha ezt a módot választjuk, akkor megkapjuk, hogy az általunk beírt számsorban hány darab szám volt megfelelõ és jó helyen vagy megfelelõ és rossz helyen vagy nem tartalmazta a számsor azokat a számokat
+- közepes: ha ezt a módot választjuk, akkor megkapjuk azt, hogy hány darab számot tartalmazott a számsor a tippelt számok közül vagy nem tartalmazza
+- nehéz: ha ezt a módot választjuk, akkor az általunk beírt számsorból csak azt kapjuk meg, hogy hány szám van benne a számsorban és még jó helyen is van
 A játék akkor ér véget, ha kitaláljuk a számsort és nyerünk vagy elfogynak a lépéseink és elveszítjük a játékot.
 
 A játék használata:
