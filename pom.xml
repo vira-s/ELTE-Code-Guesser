@@ -30,9 +30,9 @@
         <jacoco.percentage.instruction>0.37</jacoco.percentage.instruction>
         <jacoco.percentage.line>0.43</jacoco.percentage.line>
         <jacoco.percentage.class>0.42</jacoco.percentage.class>
-        <jacoco.percentage.branch>0.36</jacoco.percentage.branch>
-        <jacoco.percentage.method>0.48</jacoco.percentage.method>
-        <jacoco.percentage.complexity>0.38</jacoco.percentage.complexity>
+        <jacoco.percentage.branch>0.35</jacoco.percentage.branch>
+        <jacoco.percentage.method>0.46</jacoco.percentage.method>
+        <jacoco.percentage.complexity>0.37</jacoco.percentage.complexity>
 
     </properties>
 
